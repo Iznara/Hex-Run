@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { View, Button, StyleSheet, TouchableOpacity, Text } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import { checkPathIsInPolys, updateTrackerArray } from "../utils/helpers";
+import { updateTrackerArray } from "../utils/helpers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { auth, db } from "../Firebase/firebase";
 import { getPathLength, isPointInPolygon } from "geolib";
@@ -10,7 +10,6 @@ import {
 	arrayUnion,
 	doc,
 	getDoc,
-	increment,
 	setDoc,
 	updateDoc,
 } from "firebase/firestore";
@@ -46,35 +45,11 @@ function Tracker({ setTrack, track, setRunData, setModalVisible }) {
 			getStoredTrackerData();
 		}, 2000); //change this number to set how often local memory is checked to update route on screen
 		setStartTime(dayjs());
-		console.log("start time SET", startTime);
 		currentHex = -1;
 		nuetralHexes = 0;
 		enemyHexes = 0;
 		enemiesToNotify = [];
-		console.log("tracking started?", hasStarted);
 	};
-
-	//ask permissions on component mount
-	useEffect(() => {
-		const config = async () => {
-			let resf = await Location.requestForegroundPermissionsAsync();
-			let resb = await Location.requestBackgroundPermissionsAsync();
-			if (resf.status != "granted" && resb.status !== "granted") {
-				console.log("Permission to access location was denied");
-			} else {
-				console.log("Permission to access location granted");
-			}
-		};
-		config();
-		// if (!locationStarted) {
-		// 	TaskManager.isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
-		// 		if (tracking) {
-		// 			Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
-		// 			console.log("tracking Stopped");
-		// 		}
-		// 	});
-		// }
-	}, []);
 
 	const levelUpCheck = (task, stat, perGame) => {
 		let count = 0;
@@ -158,79 +133,61 @@ function Tracker({ setTrack, track, setRunData, setModalVisible }) {
 					route: track,
 				}),
 			});
-	
-		let _level_up = false;
-		if (goalsHit > 0) {
-			_level_up = true;
-		}
-		setRunData({
-			start_time: startTime,
-			duration: dayjs.duration(runTime).format("H:mm:ss"),
-			best_t: pb_time,
-			distance: runDist / 1000,
-			best_d: pb_dist,
-			speed: runDist / 1000 / Number(dayjs.duration(runTime).asHours()),
-			// route: track,
-			claimedHexes: claimedHexes,
-			best_x: pb_hex,
-			level: newLevel,
-			level_up: _level_up,
-		});
-		setModalVisible(true);
-		setTrack([]);
-		currentHex = -1;
-		claimedHexes = 0;
-			} else {
-			console.log("No such document!");
+
+			let _level_up = false;
+			if (goalsHit > 0) {
+				_level_up = true;
+			}
+			setRunData({
+				start_time: startTime,
+				duration: dayjs.duration(runTime).format("H:mm:ss"),
+				best_t: pb_time,
+				distance: runDist / 1000,
+				best_d: pb_dist,
+				speed: runDist / 1000 / Number(dayjs.duration(runTime).asHours()),
+				claimedHexes: claimedHexes,
+				best_x: pb_hex,
+				level: newLevel,
+				level_up: _level_up,
+			});
+			setModalVisible(true);
+			setTrack([]);
+			currentHex = -1;
+			claimedHexes = 0;
 		}
 		TaskManager.isTaskRegisteredAsync(LOCATION_TRACKING).then((tracking) => {
 			if (tracking) {
 				Location.stopLocationUpdatesAsync(LOCATION_TRACKING);
-				console.log("tracking Stopped");
 			}
 		});
 	};
 
 	//collect data stored by tracker, put it in state, clear local storage
 	const getStoredTrackerData = async () => {
-		try {
-			let jsonValue = await AsyncStorage.getItem("trackerArray");
-			if (jsonValue) {
-				const parsedArray = JSON.parse(jsonValue);
-				setTrack((currTrack) => [...currTrack, ...parsedArray]);
-				await AsyncStorage.removeItem("trackerArray");
-			}
-			//DELETE THIS IF TRACKING WORKS
-			// const parsedArray = jsonValue != null ? JSON.parse(jsonValue) : null;
-			// jsonValue = JSON.stringify([]);
-			// await AsyncStorage.setItem("trackerArray", jsonValue);
-		} catch (e) {
-			console.log("error in get stored tracker data", e);
+		let jsonValue = await AsyncStorage.getItem("trackerArray");
+		if (jsonValue) {
+			const parsedArray = JSON.parse(jsonValue);
+			setTrack((currTrack) => [...currTrack, ...parsedArray]);
+			await AsyncStorage.removeItem("trackerArray");
 		}
 	};
 
 	return (
 		<View style={styles.container}>
 			{locationStarted ? (
-				// <Button title="STOP" onPress={stopLocation} />
 				<TouchableOpacity onPress={stopLocation} style={styles.Button}>
-				<Text style={styles.ButtonText}>Stop Run</Text>
+					<Text style={styles.ButtonText}>Stop Run</Text>
 				</TouchableOpacity>
 			) : (
-				// <Button title="Start Run" onPress={startLocation} />
 				<TouchableOpacity onPress={startLocation} style={styles.Button}>
-				<Text style={styles.ButtonText}>Start Run</Text>
+					<Text style={styles.ButtonText}>Start Run</Text>
 				</TouchableOpacity>
 			)}
 		</View>
 	);
 }
 
-TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
-	if (error) {
-		console.log("LOCATION_TRACKING TASK ERROR:", error);
-		return;
-	}
+TaskManager.defineTask(LOCATION_TRACKING, async ({ data }) => {
 	if (data) {
 		const { locations } = data;
 		const newPoint = {
@@ -246,15 +203,12 @@ var currentHex = -1;
 var claimedHexes = 0;
 
 const updateHexOwnerBackend = async (newPoint) => {
-	// console.log("auth.currentUser.uid: ", auth.currentUser.uid);
-	// console.log("globalColour: ", globalColour);
 	for (let i = 0; i < globalHexBoard.length; i++) {
 		const hex = globalHexBoard[i];
 		if (isPointInPolygon(newPoint, hex.coords)) {
 			if (currentHex !== i) {
 				currentHex = i;
-				//only claim hex if it is not tile currently standing in
-				if (hex.current_owner != auth.currentUser.uid){
+				if (hex.current_owner != auth.currentUser.uid) {
 					claimedHexes++;
 					hex.current_owner = auth.currentUser.uid;
 					hex.col = hexToRgba(globalColour, 0.6);

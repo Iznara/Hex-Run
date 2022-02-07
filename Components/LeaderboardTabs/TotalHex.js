@@ -16,8 +16,6 @@ const TotalHex = () => {
   useEffect(() => {
     const GetAllData = async () => {
       const usersCol = collection(db, "user");
-      //change order by
-      //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       const q = query(usersCol, orderBy("total_hexagons", "desc"), limit(25));
       const usersSnapshot = await getDocs(q);
       const usersList = usersSnapshot.docs.map((doc) => doc.data());
@@ -30,10 +28,7 @@ const TotalHex = () => {
     tableHead: [
       "Position",
       "Player",
-      //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      //"CURRENT HEX COUNT",
       "Hexagons",
-      //"TOTAL DISTANCE",
     ],
     tableTitle: [],
 
@@ -44,10 +39,7 @@ const TotalHex = () => {
   users.forEach((user) => {
     CONTENT.tableData.push([
       user.fullname,
-      //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      //user.curr_hexagons,
       user.total_hexagons,
-      //user.total_distance,
     ]),
       CONTENT.tableTitle.push(index);
     index++;
@@ -55,7 +47,6 @@ const TotalHex = () => {
 
   return (
     <View style={styles.container}>
-      {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
       <Text style={styles.titleOfTable}>Total Hexagons</Text>
 
       <ScrollView vertical={true}>
@@ -70,7 +61,6 @@ const TotalHex = () => {
             <Col
               data={CONTENT.tableTitle}
               style={styles.title}
-              //heightArr={[28, 28]}
               textStyle={styles.text}
             />
             <Rows
@@ -112,7 +102,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
   },
-  // title: { flex: 1 },
   row: {
     backgroundColor: "#fff",
   },

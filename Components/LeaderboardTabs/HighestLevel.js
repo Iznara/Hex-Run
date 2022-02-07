@@ -54,7 +54,6 @@ const HighestLevel = () => {
             <Col
               data={CONTENT.tableTitle}
               style={styles.title}
-              //heightArr={[28, 28]}
               textStyle={styles.text}
             />
             <Rows
@@ -96,7 +95,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
   },
-  // title: { flex: 1 },
   row: {
     backgroundColor: "#fff",
   },

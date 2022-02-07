@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { auth, db } from "../Firebase/firebase";
 import ProgressCard from "./ProgressCard";
 
@@ -22,41 +22,33 @@ const ProgressScreen = () => {
       const docSnap = await getDoc(userRef);
       if (docSnap.exists()) {
         setTaskList(docSnap.data().tasks);
-      } else {
-        console.log("No such document!");
-      }
+      } 
     };
     GetProgress();
   }, []);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        flexDirection: "column",
-      }}
-    >
-      {taskList.length > 0 ? (
-        <>
-          <ProgressCard cardTask={taskList[0]} text={taskText[0]} />
-          <ProgressCard cardTask={taskList[1]} text={taskText[1]} />
-          <ProgressCard cardTask={taskList[2]} text={taskText[2]} />
-          <ProgressCard cardTask={taskList[3]} text={taskText[3]} />
-          <ProgressCard cardTask={taskList[4]} text={taskText[4]} />
-          <ProgressCard cardTask={taskList[5]} text={taskText[5]} />
-          <ProgressCard cardTask={taskList[6]} text={taskText[6]} />
-        </>
-      ) : null}
-    </View>
+    <ScrollView>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+        }}
+      >
+        {taskList.length > 0 ? (
+          <>
+            <ProgressCard cardTask={taskList[0]} text={taskText[0]} />
+            <ProgressCard cardTask={taskList[1]} text={taskText[1]} />
+            <ProgressCard cardTask={taskList[2]} text={taskText[2]} />
+            <ProgressCard cardTask={taskList[3]} text={taskText[3]} />
+            <ProgressCard cardTask={taskList[4]} text={taskText[4]} />
+            <ProgressCard cardTask={taskList[5]} text={taskText[5]} />
+            <ProgressCard cardTask={taskList[6]} text={taskText[6]} />
+          </>
+        ) : null}
+      </View>
+    </ScrollView>
   );
 };
 
 export default ProgressScreen;
-
-// {taskList.length > 0 ? (
-// 	taskList.map((task, index) => {
-// 		<ProgressCard cardTask={task} text={taskText[index]} />;
-// 	})
-// ) : (
-// 	<Text>NO TASKS</Text>
-// )}

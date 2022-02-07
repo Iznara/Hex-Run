@@ -16,8 +16,6 @@ var duration = require("dayjs/plugin/duration");
 dayjs.extend(duration);
 
 const AccountScreen = () => {
-	// logs e-mail address of user, also has a displayName key (username for our app that people can create when they sign up??)
-	// console.log(firebase.auth());
 	const [user, setUser] = useState({});
 
 	useEffect(() => {
@@ -26,9 +24,7 @@ const AccountScreen = () => {
 			const docSnap = await getDoc(docRef);
 			if (docSnap.exists()) {
 				setUser(docSnap.data());
-			} else {
-				console.log("No such document!");
-			}
+			} 
 		};
 		GetSingleUser();
 	}, []);
@@ -37,9 +33,7 @@ const AccountScreen = () => {
 		signOut(auth);
 	};
 	dayjs.duration(user.total_playtime).format("H:mm:ss");
-	//https://docs.expo.dev/versions/latest/sdk/sharing/
 	const shareMessage = () => {
-		//Here is the Share API
 		Share.share({
 			message: `Check out my stats on Hex-Run
       I currently own ${user.curr_hexagons} hexagons.
@@ -49,10 +43,6 @@ const AccountScreen = () => {
 				.duration(user.total_playtime)
 				.format("H:mm:ss")}`,
 		})
-			//after successful share return result
-			.then((result) => console.log(result))
-			//If any thing goes wrong it comes here
-			.catch((errorMsg) => console.log(errorMsg));
 	};
 
 	return (

@@ -11,27 +11,18 @@ import {
 import MapView, { PROVIDER_GOOGLE, Polygon, Polyline } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Tracker from "../../Components/Tracker";
-import { AddListener, createBoard, GetColour } from "../../utils/helpers";
-import { setDoc, getDoc, doc } from "firebase/firestore";
-import { auth, db } from "../../Firebase/firebase";
-import nightview from "../../mapstyles/nightview";
+import { AddListener } from "../../utils/helpers";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../../Firebase/firebase";
 import silverview from "../../mapstyles/silverview";
 import * as Location from "expo-location";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 export default function MapScreen() {
 	//this is start location only for map and also for generating grid board. Ideally not hardcoded.
-	// const leeds_lat = 53.7999506;
-	// const leeds_long = -1.5497128;
-
 	const leeds_lat = 53.9058;
 	const leeds_long = -1.6918;
 
-	//const leeds_lat = 53.95983643845927; //york_lat
-	//const leeds_long = -1.0797423411577778; //york_long
-
 	const [userLoc, setUserLoc] = useState({
-		//do we still need to track this?
 		latitude: leeds_lat,
 		longitude: leeds_long,
 	});
@@ -63,7 +54,6 @@ export default function MapScreen() {
 	}, []);
 
 	const tappedPoly = async (index) => {
-		console.log("tapped poly ", hexBoard[index].current_owner);
 		const tapped = hexBoard[index];
 		if (tapped.current_owner != null) {
 			const docRef = doc(db, "user", tapped.current_owner);

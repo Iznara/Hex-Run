@@ -1,5 +1,4 @@
-//import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, LogBox } from "react-native";
+import { StyleSheet, LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -10,7 +9,6 @@ import AccountScreen from "./screens/signedIn/AccountScreen";
 import MapScreen from "./screens/signedIn/MapScreen";
 import SocialScreen from "./screens/signedIn/SocialScreen";
 import { Ionicons } from "@expo/vector-icons";
-import TestToolScreen from "./screens/signedIn/TestToolScreen";
 import { auth } from "./Firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import ResetPassword from "./screens/ResetPassword";
@@ -30,7 +28,6 @@ export default function App() {
 	const Tab = createBottomTabNavigator();
 
 	useEffect(() => {
-		// firebase.auth().onAuthStateChanged(user => {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
 				setIsSignedIn(true);
@@ -46,7 +43,6 @@ export default function App() {
 			<NavigationContainer>
 				<Tab.Navigator
 					screenOptions={() => ({
-						//headerShown: false,
 						tabBarActiveTintColor: "tomato",
 						tabBarInactiveTintColor: "gray",
 					})}
@@ -70,19 +66,9 @@ export default function App() {
 						}}
 					/>
 
-					{/* <Tab.Screen
-						name="Leaderboard"
-						component={SocialScreen}
-						options={{
-							tabBarIcon: ({ color, size }) => (
-								<Ionicons name="people" color={color} size={size} />
-							),
-						}}
-					/> */}
-
 					<Tab.Screen
 						name="Leaderboards"
-						component={TestToolScreen}
+						component={SocialScreen}
 						options={{
 							tabBarIcon: ({ color, size }) => (
 								<Ionicons name="podium" color={color} size={size} />

@@ -8,8 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import FormError from "../Components/FormError";
-import { auth, firebase } from "../Firebase/firebase";
-import FormSuccess from "../Components/FormSuccess";
+import { auth } from "../Firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 const SignIn = ({ navigation }) => {
@@ -33,8 +32,6 @@ const SignIn = ({ navigation }) => {
       setErrorMessage("Please fill in all fields");
       return setDisplayFormErr(true);
     }
-
-    // firebase.auth().signInWithEmailAndPassword(email, password)
     signInWithEmailAndPassword(auth, email, password)
       .then()
       .catch((err) => {
@@ -46,7 +43,6 @@ const SignIn = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.BottomView}>
-        {/* <Text style={styles.Heading}>Welcome</Text> */}
         <View>
           <Image
             style={styles.Logo}
@@ -159,8 +155,5 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     alignSelf: "center",
-    // borderRadius: 100,
-    // borderColor: user.fav_colour,
-    // borderWidth: 7,
   }
 });

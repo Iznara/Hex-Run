@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Text, View } from "react-native";
+import { View } from "react-native";
 import { ButtonGroup } from "react-native-elements";
 import ChartCard from "./ChartCard";
 

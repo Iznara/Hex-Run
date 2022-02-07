@@ -3,7 +3,6 @@ import { View } from "react-native";
 import {
 	VictoryChart,
 	VictoryLine,
-	VictoryTheme,
 	VictoryLabel,
 	VictoryAxis,
 } from "victory-native";

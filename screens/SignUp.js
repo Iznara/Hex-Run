@@ -7,21 +7,17 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Button,
 } from "react-native";
 import FormError from "../Components/FormError";
 import { Ionicons } from "@expo/vector-icons";
-import { auth, db, storage } from "../Firebase/firebase";
+import { auth, db } from "../Firebase/firebase";
 import {
   createUserWithEmailAndPassword,
-  getAuth,
   updateProfile,
 } from "firebase/auth";
-
 import ColorPalette from "react-native-color-palette";
 import * as ImagePicker from "expo-image-picker";
 import { doc, setDoc } from "firebase/firestore";
-// import { ref, uploadString } from "firebase/storage";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const SignUp = ({ navigation }) => {
@@ -61,14 +57,12 @@ const SignUp = ({ navigation }) => {
   };
 
   function createUser() {
-    // firebase.auth().createUserWithEmailAndPassword(email, password)
     createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
         AddUserData();
         updateProfile(auth.currentUser, {
           displayName: fullName,
         }).then(() => {});
-        //setSuccessMessage("Your account has been created");
       })
       .catch((err) => {
         setErrorMessage(err.message);
@@ -201,7 +195,6 @@ const SignUp = ({ navigation }) => {
             ]}
             title={"Choose Player Colour"}
             titleStyles={styles.Text}
-            // icon={<Icon name={"check-circle-o"} size={25} color={"black"} />}
           />
           {/* Add profile pic */}
           <Text style={styles.Text}>Choose Profile Picture</Text>
@@ -211,10 +204,6 @@ const SignUp = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <View style={styles.container}>
-            {/* <Button
-							title="Pick an image from camera roll"
-							onPress={pickImage}
-						/> */}
             {accountImage && (
               <Image
                 source={{ uri: accountImage }}
@@ -325,5 +314,4 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     alignSelf: "flex-start",
   },
-  image: {},
 });

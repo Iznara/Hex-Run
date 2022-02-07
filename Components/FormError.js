@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Overlay } from 'react-native-elements';
 
 const FormError = (props) => {

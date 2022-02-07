@@ -8,25 +8,20 @@ import { doc, setDoc, onSnapshot, getDoc } from "firebase/firestore";
 //GETS POINTS STORED BY THE TASK MANAGER IN LOCAL AsycnStorage, ADDS IT NEW
 // POINT TO IT AND THEN PPUTS IT BACK IN STORAGE
 export const updateTrackerArray = async (newValue) => {
-	try {
-		let newArray;
-		let jsonValue = await AsyncStorage.getItem("trackerArray");
-		if (jsonValue) {
-			const parsedArray = JSON.parse(jsonValue);
-			newArray = [...parsedArray, newValue];
-		} else {
-			newArray = [newValue];
-		}
-		const newJsonValue = JSON.stringify(newArray);
-		await AsyncStorage.setItem("trackerArray", newJsonValue);
-	} catch (e) {
-		console.log("update tracker array error", e);
+	let newArray;
+	let jsonValue = await AsyncStorage.getItem("trackerArray");
+	if (jsonValue) {
+		const parsedArray = JSON.parse(jsonValue);
+		newArray = [...parsedArray, newValue];
+	} else {
+		newArray = [newValue];
 	}
+	const newJsonValue = JSON.stringify(newArray);
+	await AsyncStorage.setItem("trackerArray", newJsonValue);
 };
 
 //GENERATE THE GAME BOARD
 export const createBoard = (_lon, _lat) => {
-	console.log("board created");
 	const board_size = 0.02;
 	const board_h = board_size * 2; //can change this 2 value to adjust for a more square board
 	const bbox = [
@@ -69,10 +64,7 @@ export const GetColour = async () => {
 	const docRef = doc(db, "user", auth.currentUser.uid);
 	const docSnap = await getDoc(docRef);
 	if (docSnap.exists()) {
-		console.log("get colour result: ", docSnap.data().fav_colour);
 		globalColour = docSnap.data().fav_colour;
-	} else {
-		console.log("No such user!");
 	}
 };
 
@@ -80,9 +72,7 @@ export const AddListener = (setHexBoard) => {
 	const unsub = onSnapshot(doc(db, "gameboard", board_name), (doc) => {
 		setHexBoard(doc.data().board);
 		globalHexBoard = doc.data().board;
-		// console.log("Current data: ", doc.data().board[0].col);
 		const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-		console.log("addListner: ", source, " data: ", doc.data().board[0].col);
 	});
 };
 
@@ -109,13 +99,6 @@ export const checkPathIsInPolys = (pointsArray, hexArray, setHexBoard) => {
 
 //FIND USERS CURRENT POSITION ONCE. MIGHT NOT NEED NOW USING BACKGROUND TRACKER?
 export const findUser = async () => {
-	const { status } = await Location.requestForegroundPermissionsAsync();
-	if (status !== "granted") {
-		console.log("Permission to access location was denied");
-		return;
-	} else {
-		console.log("Permission to access location granted");
-	}
 
 	const loc = await Location.getCurrentPositionAsync({
 		accuracy: Location.Accuracy.Balanced,
@@ -125,7 +108,6 @@ export const findUser = async () => {
 	});
 
 	setUserLoc({
-		//does this function need to be a paramater?
 		latitude: loc.coords.latitude,
 		longitude: loc.coords.longitude,
 	});
