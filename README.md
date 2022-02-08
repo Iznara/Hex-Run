@@ -49,6 +49,8 @@ To run Hex-Run on an Andorid or iOS device you will need to download the 'Expo' 
 
 5. Scan the QR code provided in your temrinal using the Expo app on your mobile device.
 
+6. (Optional) A hosted QR code for the app can be found at https://expo.dev/@iznara/hex-run 
 
-6. A hosted QR code for the app can be found at https://expo.dev/@iznara/hex-run 
-
+7. When the app has loaded on your device you can either sign-up for a new account or log-in with the following account that has some pre-populated data. 
+- Email: Rm@gmail.com
+- Password: Password
